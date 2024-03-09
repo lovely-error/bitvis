@@ -1,5 +1,5 @@
 [package]
-name = "ascii_instr_writer"
+name = "bitvis"
 version = "0.1.0"
 edition = "2021"
 
