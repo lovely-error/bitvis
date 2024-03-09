@@ -1,16 +1,4 @@
 
-// LTR , RTL
-
-// <opts> | <item>, <item>... ;
-// <opts> := ltr fw:32 lw:16
-// <item> := 8 sdawdasdw #10011001
-
-
-//   7   6   5   4   3   2   1   0
-// +---+---+---+---+---+---+---+---+
-// |                   |           |
-// +---+---+---+---+---+---+---+---+
-
 use core::fmt::Write;
 use std::{env, io::{prelude::Write as _, stderr, stdout}};
 
