@@ -1,5 +1,5 @@
 
-use core::fmt::Write;
+use core::{fmt::Write, iter::zip};
 use std::{env, io::{prelude::Write as _, stderr, stdout}};
 
 enum Dir { LTR, RTL }
@@ -383,6 +383,21 @@ fn main() {
         },
     };
 
+    for (item_ix, item) in zip(1.., &items) {
+        for (seg_ix, comp) in zip(0.., &item.comps) {
+            if let Some(bpat) = &comp.binary_pattern {
+                let bitwidth = comp.width;
+                let pat_len = bpat.len();
+                if pat_len  > bitwidth {
+                    write!(&mut stderr,
+                        "Invalid configuration in item {} in segment {}. Field width is {}, but pattern length is {}",
+                        item_ix, seg_ix, bitwidth, pat_len).unwrap();
+                    return;
+                }
+            }
+        }
+    }
+
     let mut str = String::new();
     for item in items {
         render_pat(&item, &mut str);
@@ -412,3 +427,40 @@ fn hui3() {
         ix += 1;
     }
 }
+
+#[test]
+fn hui4() {
+
+    let str = "< | 2 #01, 3 #011, 2 DT, 3 DST, 6 SRC";
+    let mut par = Parser::new(str.as_bytes());
+    let items = match par.parse_items() {
+        Ok(v) => v,
+        Err(err) => {
+            match err {
+                Failure::Msg(msg) =>
+                    println!("{}", msg)
+            }
+            return;
+        },
+    };
+
+    for (item_ix, item) in zip(1.., &items) {
+        for (seg_ix, comp) in zip(0.., &item.comps) {
+            if let Some(bpat) = &comp.binary_pattern {
+                let bitwidth = comp.width;
+                let pat_len = bpat.len();
+                if pat_len  > bitwidth {
+                    println!("Invalid configuration in item {} in segment {}. Field width is {}, but pattern length is {}",
+                        item_ix, seg_ix, bitwidth, pat_len);
+                    return;
+                }
+            }
+        }
+    }
+
+    let mut str = String::new();
+    render_pat(&items[0], &mut str);
+
+    println!("{}", str)
+}
+
