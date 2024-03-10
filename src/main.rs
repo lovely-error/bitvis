@@ -385,8 +385,8 @@ fn main() {
 
     for (item_ix, item) in zip(1.., &items) {
         for (seg_ix, comp) in zip(0.., &item.comps) {
+            let bitwidth = comp.width;
             if let Some(bpat) = &comp.binary_pattern {
-                let bitwidth = comp.width;
                 let pat_len = bpat.len();
                 if pat_len  > bitwidth {
                     write!(&mut stderr,
@@ -394,6 +394,9 @@ fn main() {
                         item_ix, seg_ix, bitwidth, pat_len).unwrap();
                     return;
                 }
+            }
+            if bitwidth == 0 {
+                write!(&mut stderr, "Zero bitwidth in item {} in segment {}", item_ix, seg_ix).unwrap();
             }
         }
     }
