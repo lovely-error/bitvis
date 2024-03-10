@@ -449,7 +449,7 @@ fn hui4() {
     };
 
     for (item_ix, item) in zip(1.., &items) {
-        for (seg_ix, comp) in zip(0.., &item.comps) {
+        for (seg_ix, comp) in zip(1.., &item.comps) {
             if let Some(bpat) = &comp.binary_pattern {
                 let bitwidth = comp.width;
                 let pat_len = bpat.len();
@@ -467,4 +467,36 @@ fn hui4() {
 
     println!("{}", str)
 }
+
+#[test]
+fn hui5 () {
+    let str = "< | 0 #01, 3 #011, 2 DT, 3 DST, 6 SRC";
+    let mut par = Parser::new(str.as_bytes());
+    let items = match par.parse_items() {
+        Ok(v) => v,
+        Err(err) => {
+            match err {
+                Failure::Msg(msg) =>
+                    println!("{}", msg)
+            }
+            return;
+        },
+    };
+
+    for (item_ix, item) in zip(1.., &items) {
+        for (seg_ix, comp) in zip(0.., &item.comps) {
+            let bitwidth = comp.width;
+            if bitwidth == 0 {
+                println!("Zero bitwidth in item {} in segment {}", item_ix, seg_ix);
+                return;
+            }
+        }
+    }
+
+    let mut str = String::new();
+    render_pat(&items[0], &mut str);
+
+    println!("{}", str)
+}
+
 
