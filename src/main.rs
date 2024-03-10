@@ -397,6 +397,7 @@ fn main() {
             }
             if bitwidth == 0 {
                 write!(&mut stderr, "Zero bitwidth in item {} in segment {}", item_ix, seg_ix).unwrap();
+                return;
             }
         }
     }
